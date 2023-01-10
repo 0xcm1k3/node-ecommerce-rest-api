@@ -3,6 +3,7 @@ logs
 *.log
 *.zip
 *.csv
+todo.txt
 
 npm-debug.log*
 yarn-debug.log*

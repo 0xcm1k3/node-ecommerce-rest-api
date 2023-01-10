@@ -80,8 +80,7 @@ const excuteSQL = (query, callback) => {
   var connection = mysql.createConnection(db_config);
   connection.connect();
   connection.query(query, function (error, results, fields) {
-    if (error)
-      error = JSON.stringify({ error: error?.sqlMessage, code: error?.code });
+    if (error) error = { error: error?.sqlMessage, code: error?.code };
     callback(error, results);
   });
   connection.end();
