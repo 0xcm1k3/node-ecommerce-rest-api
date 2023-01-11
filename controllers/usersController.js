@@ -3,6 +3,7 @@ const { hashThis } = require("../helpers/encryption");
 const logger = require("../helpers/logger");
 const validator = require("../helpers/validation");
 
+const SQLescape = require("sqlstring");
 //add-user
 const addUser = (req, res) => {
   if (
@@ -46,12 +47,12 @@ const addUser = (req, res) => {
       error: "invalid role",
       code: "invalid_role",
     });
-  const signupQuery = `INSERT INTO USERS (full_name, email_address, password, role) VALUES (\"${validname}\", \"${
-    req.body.email_address
-  }\", \"${hashThis(req.body.password)}\", \"${
-    !req.body.role ? "CLIENT" : req.body.role
-  }\");`;
-  excuteSQL(signupQuery, (err, result) => {
+  const newUserQuery = `INSERT INTO USERS (full_name, email_address, password, role) VALUES (${SQLescape.escape(
+    validname
+  )}, ${SQLescape.escape(req.body.email_address)}, ${SQLescape.escape(
+    hashThis(req.body.password)
+  )}, ${!req.body.role ? "CLIENT" : SQLescape.escape(req.body.role)});`;
+  excuteSQL(newUserQuery, (err, result) => {
     if (err) {
       if (err.code == "ER_DUP_ENTRY")
         return res.status(400).send({
@@ -178,7 +179,7 @@ const updateUser = (req, res) => {
 
   const updateUserQuery = `UPDATE USERS SET ${Object.entries(updateBody)
     .map(([key, value]) =>
-      key != "confirm_password" ? `${key}=\"${value}\"` : ""
+      key != "confirm_password" ? `${key}=${SQLescape.escape(value)}` : ""
     )
     .join(",")} WHERE ID=${parseInt(req.params.user)} LIMIT 1`;
   excuteSQL(updateUserQuery, (err, result) => {
@@ -230,9 +231,9 @@ const deleteUser = (req, res) => {
         "you are about to delete your admin account please set param 'force' to be true in order to complete this action",
       code: "kill_admin",
     });
-  const UserQuery = `DELETE FROM USERS WHERE ID=\"${parseInt(
+  const UserQuery = `DELETE FROM USERS WHERE ID=${SQLescape.escape(
     req.params.user
-  )}\" LIMIT 1`;
+  )} LIMIT 1`;
   excuteSQL(UserQuery, (err, result) => {
     if (err) {
       logger.error(err);
@@ -261,11 +262,9 @@ const viewUser = (req, res) => {
     return res
       .status(401)
       .send({ error: "insufficient privilege", code: "privilege_error" });
-
-  //TODO : PATCH SQL INJECTION in user param ( deployed temp solution which allow only int to be passed)
-  const getUserQuery = `SELECT ID,full_name, email_address,lastSeenAt,registeredAt,role,stripe_id FROM USERS WHERE ID=\"${parseInt(
+  const getUserQuery = `SELECT ID,full_name, email_address,lastSeenAt,registeredAt,role,stripe_id FROM USERS WHERE ID=${SQLescape.escape(
     req.params.user
-  )}\" LIMIT 1`;
+  )} LIMIT 1`;
   excuteSQL(getUserQuery, (err, user) => {
     if (err) {
       logger.error(err);
@@ -340,9 +339,9 @@ const updateProfile = (req, res) => {
 
   const updateUserQuery = `UPDATE USERS SET ${Object.entries(updateBody)
     .map(([key, value]) =>
-      key != "confirm_password" ? `${key}=\"${value}\"` : ""
+      key != "confirm_password" ? `${key}=${SQLescape.escape(value)}` : ""
     )
-    .join(",")} WHERE ID=${parseInt(req.params.user)} LIMIT 1`;
+    .join(",")} WHERE ID=${SQLescape.escape(req.params.user)} LIMIT 1`;
   excuteSQL(updateUserQuery, (err, result) => {
     if (err) {
       console.log(err["code"]);

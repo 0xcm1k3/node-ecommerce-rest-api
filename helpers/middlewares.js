@@ -1,5 +1,6 @@
 const jsonwebtoken = require("jsonwebtoken");
 const { excuteSQL } = require("./database");
+const SQLescape = require("sqlstring");
 require("dotenv").config();
 const setUser = (req, res, next) => {
   if (req.headers && req.headers.authorization) {
@@ -13,7 +14,9 @@ const setUser = (req, res, next) => {
             req.sessionExpired = true;
           }
         }
-        const setRoleQuery = `SELECT role FROM USERS WHERE email_address=\"${decode?.email}\"`;
+        const setRoleQuery = `SELECT role FROM USERS WHERE email_address=${SQLescape.escape(
+          decode?.email
+        )}`;
         excuteSQL(setRoleQuery, (err, role) => {
           if (err) {
             req.user = undefined;

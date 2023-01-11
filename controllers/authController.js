@@ -1,4 +1,6 @@
 const { excuteSQL } = require("../helpers/database");
+const SQLescape = require("sqlstring");
+
 const { hashThis, compareHash } = require("../helpers/encryption");
 const jwt = require("jsonwebtoken");
 const validator = require("../helpers/validation");
@@ -41,11 +43,11 @@ const sign_up = (req, res) => {
       error_code: "invalid_email_address",
     });
 
-  const signupQuery = `INSERT INTO USERS (full_name, email_address, password, role) VALUES (\"${validname}\", \"${
-    req.body.email_address
-  }\", \"${hashThis(req.body.password)}\", \"${
-    req.body.isMerchant ? "MERCHANT" : "CLIENT"
-  }\");`;
+  const signupQuery = `INSERT INTO USERS (full_name, email_address, password, role) VALUES (${SQLescape.escape(
+    validname
+  )}, ${SQLescape.escape(req.body.email_address)}, ${SQLescape.escape(
+    hashThis(req.body.password)
+  )}, \"${req.body.isMerchant ? "MERCHANT" : "CLIENT"}\");`;
   excuteSQL(signupQuery, (err, result) => {
     if (err) {
       if (err.code == "ER_DUP_ENTRY")
@@ -69,7 +71,9 @@ const sign_in = (req, res) => {
       .status(400)
       .send({ error: "missing params", error_code: "missing_params" });
 
-  const checkifUserExist = `SELECT ID,email_address,password FROM USERS WHERE email_address=\"${req.body.email_address}\" LIMIT 1`;
+  const checkifUserExist = `SELECT ID,email_address,password FROM USERS WHERE email_address=${SQLescape.escape(
+    req.body.email_address
+  )} LIMIT 1`;
 
   excuteSQL(checkifUserExist, (err, results) => {
     if (err) {
