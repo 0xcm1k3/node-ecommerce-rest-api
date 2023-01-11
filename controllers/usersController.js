@@ -90,12 +90,17 @@ const viewUsers = (req, res) => {
         return res.send(403);
       }
       const total = users[0].at(-1).total;
+      if (total <= 0)
+        return res.send({ error: "no users to show", code: "no_users" });
       if (page > Math.ceil(total / limit))
         return res.status(400).send({
           error: `invalid page number (max pages:${Math.ceil(total / limit)})`,
           code: "invalid_page",
         });
-      return res.send(users.at(-1));
+      return res.send({
+        message: `page ${page} out of ${Math.ceil(total / limit)}`,
+        users: users.at(-1),
+      });
     }
   );
 };

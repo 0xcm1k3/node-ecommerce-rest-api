@@ -7,6 +7,7 @@ const { setUser } = require("./helpers/middlewares");
 const authRoute = require("./routes/authRoute");
 const paymentsRoute = require("./routes/paymentsRoute");
 const usersRoute = require("./routes/usersRoute");
+const productsRoute = require("./routes/productsRoute");
 require("dotenv").config();
 const app = express();
 app.use(setUser);
@@ -23,7 +24,7 @@ app.use((req, res, next) => {
 app.use("/auth", authRoute);
 app.use("/payments", paymentsRoute);
 app.use("/users", usersRoute);
-
+app.use("/products", productsRoute);
 initDB(async (error) => {
   if (error) {
     logger.debug(`failed to connect to db due to ${error}`);

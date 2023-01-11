@@ -22,7 +22,7 @@ router
   .all((req, res) => res.sendStatus(405));
 
 router
-  .route("/:user/")
+  .route("/:user")
   //my-profile
   .get(loginRequired, viewUser)
   //update-profile
