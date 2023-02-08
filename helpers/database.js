@@ -29,42 +29,56 @@ const initDB = async (callback) => {
         PRIMARY KEY (ID),
         UNIQUE (ID)
     );
+    CREATE TABLE IF NOT EXISTS CATEGORIES (
+      ID int NOT NULL AUTO_INCREMENT,
+      name varchar(255) NOT NULL UNIQUE,
+      PRIMARY KEY (ID),
+      UNIQUE (ID)
+  );
     CREATE TABLE IF NOT EXISTS ORDERS (
         ID int NOT NULL AUTO_INCREMENT,
         owner varchar(255) NOT NULL,
         total varchar(255) NOT NULL,
-        status ENUM("COMPLETED","CANCELED","PENDING") NOT NULL,
+        status ENUM("COMPLETED","CANCELED","PENDING","PAID") NOT NULL,
         transction_id varchar(255) NOT NULL,
         payment_method ENUM("STRIPE","PAYPAL") NOT NULL,
-        items ENUM("") NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
         PRIMARY KEY (ID),
-        UNIQUE (ID)
+        UNIQUE (ID),
+        FOREIGN KEY (owner) REFERENCES USERS(email_address)
     );
     CREATE TABLE IF NOT EXISTS PRODUCTS (
       ID int NOT NULL AUTO_INCREMENT,
       name varchar(255) NOT NULL,
       price varchar(255) NOT NULL,
-      category varchar(255) NOT NULL,
+      category int NOT NULL,
       owner varchar(255) NOT NULL,
       imageURL varchar(255),
       PRIMARY KEY (ID),
-      UNIQUE (ID)
+      UNIQUE (ID),
+      FOREIGN KEY (category) REFERENCES CATEGORIES(ID)
   );
-  CREATE TABLE IF NOT EXISTS CATEGORIES (
+  CREATE TABLE IF NOT EXISTS ORDERS_ITEMS (
     ID int NOT NULL AUTO_INCREMENT,
-    name varchar(255) NOT NULL,
+    product_id int NOT NULL,
+    qty varchar(255),
+    order_id int,
+    merchant int,
     PRIMARY KEY (ID),
-    UNIQUE (ID)
+    UNIQUE (ID),
+    FOREIGN KEY (product_id) REFERENCES PRODUCTS(ID),
+    FOREIGN KEY (order_id) REFERENCES ORDERS(ID),
+    FOREIGN KEY (merchant) REFERENCES USERS(ID)
 );`;
 
     // default admin creds {email_address:admin@admin.com,password:admin123}
     const defaultCredsQuery = `INSERT IGNORE INTO USERS (full_name, email_address, password, role) VALUES ("admin admin","admin@admin.com",\"${hashThis(
       "admin123"
-    )}\","ADMIN")`;
+    )}\","ADMIN");`;
+    const defaultCategoriesQuery = `INSERT IGNORE INTO CATEGORIES (id,name) VALUE (3,'vegtables'),(2,'fruits'),(1,'others');`;
     connection.connect();
     connection.query(
-      init_query + defaultCredsQuery,
+      init_query + defaultCredsQuery + defaultCategoriesQuery,
       (error, results, fields) => {
         if (error) error = error?.sqlMessage ?? error;
         callback(error);

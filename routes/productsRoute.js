@@ -28,6 +28,7 @@ router
   .post(loginRequired, addProduct)
   .all((req, res) => res.sendStatus(405));
 
+//TODO:fix error when callin anything on random endpoint /xxx instead of /product_id
 router
   .route("/:product")
   //view-product

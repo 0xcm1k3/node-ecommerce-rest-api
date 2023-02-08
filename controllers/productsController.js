@@ -120,12 +120,18 @@ const addProduct = (req, res) => {
       .status(401)
       .send({ error: "insufficient privilege", code: "privilege_error" });
 
-  const { product_image, product_name, product_price, product_owner } =
-    req.body;
+  const {
+    product_image,
+    product_name,
+    product_price,
+    product_owner,
+    product_category,
+  } = req.body;
 
   const toBeAdded = {
     name: product_name,
     imageURL: product_image,
+    category: product_category ?? 1,
     price: validator.isNumber(parseFloat(product_price))
       ? parseFloat(product_price)
       : undefined,
@@ -143,7 +149,6 @@ const addProduct = (req, res) => {
         .status(400)
         .send({ error: `missing ${key}`, code: "missing_param" });
   }
-
   const addProductQuery = `INSERT INTO PRODUCTS (${Object.entries(toBeAdded)
     .map(([key, _]) => key)
     .join(",")}) VALUES (${Object.entries(toBeAdded)
@@ -171,7 +176,7 @@ const viewProduct = (req, res) => {
   console.log(getProductQuery);
   excuteSQL(getProductQuery, (err, product) => {
     if (err) {
-      logger.error(err);
+      logger.error(err.error);
       return res
         .status(400)
         .send({ error: "invalid request", code: "invalid_request" });
@@ -187,7 +192,7 @@ const viewProduct = (req, res) => {
       )}`,
       (err, merchant) => {
         if (err) {
-          logger.error(err);
+          logger.error(err.error);
           return res
             .status(400)
             .send({ error: "invalid request", code: "invalid_request" });
@@ -247,7 +252,7 @@ const updateProduct = (req, res) => {
   }`;
   excuteSQL(updateProductQuery, (err, product) => {
     if (err || product?.affectedRows == 0) {
-      logger.error(err);
+      logger.error(err.error);
       return res.status(400).send({
         error: "unhandled error, please contact the admin",
         code: "unexpected_error",
@@ -279,7 +284,7 @@ const deleteProduct = (req, res) => {
   }`;
   excuteSQL(deleteProductQuery, (err, product) => {
     if (err || product?.affectedRows == 0) {
-      logger.error(err);
+      logger.error(err.error);
       return res.status(400).send({
         error: "unhandled error, please contact the admin",
         code: "unexpected_error",
