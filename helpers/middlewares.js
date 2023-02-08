@@ -50,7 +50,7 @@ const loginRequired = (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-  if (req.role.toLowerCase() == "admin") return next();
+  if (req.role?.toLowerCase() == "admin") return next();
   return res
     .status(401)
     .send({ error: "insufficient privilege", code: "privilege_error" });

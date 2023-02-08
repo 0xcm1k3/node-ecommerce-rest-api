@@ -2,8 +2,10 @@ const {
   viewOrders,
   viewMyOrders,
   viewOrder,
+  updateOrderStatus,
+  deleteOrder,
 } = require("../controllers/ordersController");
-const { loginRequired } = require("../helpers/middlewares");
+const { loginRequired, isAdmin } = require("../helpers/middlewares");
 
 const router = require("express").Router();
 
@@ -11,25 +13,22 @@ const router = require("express").Router();
 router
   .route("/all")
   .get(loginRequired, viewOrders)
-  .all((req, res) => res.sendStatus(405));
+  .all((_, res) => res.sendStatus(405));
 
 //view-my-products
 router
   .route("/my")
   .get(loginRequired, viewMyOrders)
-  .all((req, res) => res.sendStatus(405));
+  .all((_, res) => res.sendStatus(405));
 
 //order-details
 router
   .route("/:order")
-  //view-product
+  //view-order
   .get(loginRequired, viewOrder)
-  //update-product
-  // .post(loginRequired, updateProduct)
-  //delete-product
-  // .delete(loginRequired, deleteProduct)
-  .all((req, res) => res.sendStatus(405));
-//update-order
-
-//delete-order
+  // update-order
+  .post(loginRequired, updateOrderStatus)
+  //delete-order
+  .delete(loginRequired, isAdmin, deleteOrder)
+  .all((_, res) => res.sendStatus(405));
 module.exports = router;

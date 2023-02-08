@@ -280,7 +280,7 @@ const viewUser = (req, res) => {
 
     const { full_name, email_address, lastSeenAt, registeredAt, role } =
       user.at(-1);
-    if (req.role.toLowerCase() == "admin") return res.send(user.at(-1));
+    if (req.role?.toLowerCase() == "admin") return res.send(user.at(-1));
     return res.send({
       full_name,
       email_address,
