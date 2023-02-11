@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+
+    <title>Merchant dashboard</title>
+</head>
+<body>
+    WELCOME BACK , <b id="welcome_text"></b> <button id="logout">logout</button>
+    <br>
+    email : <b id="email_address_text"></b>
+    <hr>
+    <button id="add_product_btn">Add Product</button>
+    <div id="add_product_block"
+    style="display:none;border:solid 1px black;padding: 10px 10px 10px 10px;">
+       <h5>Add new product form</h5>
+       <input type="file" required id="product_image_input"><br><br>
+       <form id="add_product_form">
+        <input type="hidden" name="product_image" id="product_image_url">
+           <input  placeholder = "product name" type="text" name="product_name" id="product_name_input">
+           <br>
+           <input placeholder = "price"  type="number" name="product_price" id="product_price_input">
+           <br>
+           <br><br>
+           <button type="submit">CONFIRM</button>
+       </form>
+
+   </div>
+    <button id="view_my_orders">View my orders</button>
+
+    <hr>
+    my products
+    <main class="grid" id="products_list">
+    </main>
+
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script  type="module"  src="./scripts/merchant.js"></script>
+</body>
+</html>

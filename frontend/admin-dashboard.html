@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+
+    <title>Admin Dashboard</title>
+</head>
+
+<style>
+   
+</style>
+<body>
+    WELCOME BACK , <b id="welcome_text"></b> <button id="logout">logout</button>
+    <br>
+    email : <b id="email_address_text"></b>
+    <hr>
+    <button id="view_users_btn">View Users</button>
+    <button id="add_user_btn">Add User</button>
+    <table id="users_table" style="display: none;">
+        <tr>
+          <th>full name</th>
+          <th>email address</th>
+          <th>Stripe ID</th>
+          <th>Account type</th>
+          <th>Registred At</th>
+          <th>Last Seen At</th>
+          <th>Actions</th>
+        </tr>
+    </table>
+    <div id="add_user_block"
+     style="display:none;border:solid 1px black;padding: 10px 10px 10px 10px;">
+        <h5>Add new user form</h5>
+        <form id="add_user_form">
+            <input  placeholder = "full name" type="text" name="full_name" id="full_name_input">
+            <br>
+            <input placeholder = "email address"  type="text" name="email_address" id="email_address_input">
+            <br>
+            <input placeholder = "password"  type="password" name="password" id="password_input">
+            <br>
+             <input placeholder = "confirm password"  type="password" name="confirm_password" id="confirm_password_input">
+            <br>
+            <br>
+            <select name="role" id="role_dropdown">
+                <option value="CLIENT" selected>CLIENT</option>
+                <option value="MERCHANT">MERCHANT</option>
+                <option value="ADMIN">ADMIN</option>
+            </select>
+            <br>
+            <button type="submit">CONFIRM</button>
+        </form>
+
+    </div>
+    <hr>
+    <button id="add_product_btn">Add Product</button>
+    <div id="add_product_block"
+    style="display:none;border:solid 1px black;padding: 10px 10px 10px 10px;">
+       <h5>Add new product form</h5>
+       <input type="file" required id="product_image_input"><br><br>
+       <form id="add_product_form">
+        <input type="hidden" name="product_image" id="product_image_url">
+           <input  placeholder = "product name" type="text" name="product_name" id="product_name_input">
+           <br>
+           <input placeholder = "price"  type="number" name="product_price" id="product_price_input">
+           <br>
+           <label id="owner_label">OWNER: </label>
+           <br><br>
+           <button type="submit">CONFIRM</button>
+       </form>
+
+   </div>
+    <hr>
+    <button>View Orders</button>
+
+    <hr>
+    <main class="grid" id="products_list">
+      </main>
+
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script  type="module"  src="./scripts/admin.js"></script>
+</body>
+</html>

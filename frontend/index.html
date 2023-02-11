@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ecommerce API</title>
+</head>
+<body>
+    <div style="display: flex;">
+        <div style="width: 50%;">
+            
+            <h1>LOGIN</h1>
+            <form id="login_form" >
+                <input type="email" placeholder="email address" name="email_address" id="input_login_email_address">
+                <input type="password" placeholder="password" name="password" id="input_login_password">
+                <br>
+                <br>
+                <button type="submit">login</button>
+            </form>
+
+        </div>
+    <div style="width: 50%;">
+        <h1>REGISTER</h1>
+        <form  id="register_form" >
+            <input type="text" placeholder="Full name" name="full_name" id="input_register_full_name">
+            <input type="email" placeholder="email address" name="email_address" id="input_register_email_address">
+            <input type="password" placeholder="password" name="password" id="input_register_password">
+            <input type="password" placeholder="password" name="confirm_password" id="input_register_confirm_password">
+            <br>
+            <br>
+            <button type="submit">login</button>
+        </form>
+    </div>
+    
+    </div>
+
+    <script type ="module" src="scripts/script.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</body>
+</html>
