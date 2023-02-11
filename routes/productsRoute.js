@@ -14,19 +14,19 @@ const router = require("express").Router();
 router
   .route("/all")
   .get(loginRequired, viewProducts)
-  .all((req, res) => res.sendStatus(405));
+  .all((_, res) => res.sendStatus(405));
 
 //view-my-products
 router
   .route("/my")
   .get(loginRequired, viewMyProducts)
-  .all((req, res) => res.sendStatus(405));
+  .all((_, res) => res.sendStatus(405));
 
 //add-product
 router
   .route("/new")
   .post(loginRequired, addProduct)
-  .all((req, res) => res.sendStatus(405));
+  .all((_, res) => res.sendStatus(405));
 
 //TODO:fix error when callin anything on random endpoint /xxx instead of /product_id
 router
@@ -37,6 +37,6 @@ router
   .post(loginRequired, updateProduct)
   //delete-product
   .delete(loginRequired, deleteProduct)
-  .all((req, res) => res.sendStatus(405));
+  .all((_, res) => res.sendStatus(405));
 
 module.exports = router;

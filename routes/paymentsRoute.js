@@ -29,7 +29,7 @@ router
         });
     }
   })
-  .all((req, res) => res.sendStatus(405));
+  .all((_, res) => res.sendStatus(405));
 
 router
   .route("/:gateway/new")
@@ -52,12 +52,12 @@ router
         });
     }
   })
-  .all((req, res) => res.sendStatus(405));
+  .all((_, res) => res.sendStatus(405));
 
 router
   .route("/paypal/return")
   .get(handlePayPalPayment)
-  .all((req, res) => res.sendStatus(405));
-router.route("/:gateway/").all((req, res) => res.sendStatus(405));
+  .all((_, res) => res.sendStatus(405));
+router.route("/:gateway/").all((_, res) => res.sendStatus(405));
 
 module.exports = router;

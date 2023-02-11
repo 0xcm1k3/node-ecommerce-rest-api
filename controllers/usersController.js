@@ -71,7 +71,7 @@ const addUser = (req, res) => {
 //view-users
 const viewUsers = (req, res) => {
   let page = 1;
-  let limit = 1;
+  let limit = 20;
   if (parseInt(req.query.page) || parseInt(req.query.page) > 0) {
     page = Math.ceil(parseInt(req.query.page));
   }
@@ -81,7 +81,7 @@ const viewUsers = (req, res) => {
 
   let offset = (page - 1) * limit;
 
-  const viewUsersQuery = `SELECT full_name, email_address, stripe_id, role, registeredAt, lastSeenAt FROM USERS ORDER BY registeredAt LIMIT ${limit} OFFSET ${offset}`;
+  const viewUsersQuery = `SELECT ID,full_name, email_address, stripe_id, role, registeredAt, lastSeenAt FROM USERS ORDER BY registeredAt LIMIT ${limit} OFFSET ${offset}`;
 
   excuteSQL(
     `SELECT COUNT(*) as total FROM USERS;` + viewUsersQuery,
@@ -250,6 +250,36 @@ const deleteUser = (req, res) => {
   });
 };
 //my-profile
+
+const viewCurrentUser = (req, res) => {
+  const getUserQuery = `SELECT ID,full_name, email_address,lastSeenAt,registeredAt,role,stripe_id FROM USERS WHERE ID=${SQLescape.escape(
+    req.user.uid
+  )} LIMIT 1`;
+  excuteSQL(getUserQuery, (err, user) => {
+    if (err) {
+      logger.error(err);
+      return res
+        .status(400)
+        .send({ error: "invalid request", code: "invalid_request" });
+    }
+    if (user.length == 0)
+      return res.status(404).send({
+        error: `user with id ${parseInt(req.params.user)} was not found`,
+        code: "user_not_found",
+      });
+
+    const { full_name, email_address, lastSeenAt, registeredAt, role } =
+      user.at(-1);
+    if (req.role?.toLowerCase() == "admin") return res.send(user.at(-1));
+    return res.send({
+      full_name,
+      email_address,
+      lastSeenAt,
+      registeredAt,
+      type: role,
+    });
+  });
+};
 const viewUser = (req, res) => {
   if (!req.params.user)
     return res
@@ -307,7 +337,7 @@ const updateProfile = (req, res) => {
   const { full_name, email_address, password, confirm_password } = req.body;
   const updateBody = {};
   const validName = full_name
-    .split(" ")
+    ?.split(" ")
     .map((name) => (validator.isString(name) ? name : ""))
     .join(" ");
   if (full_name)
@@ -357,7 +387,7 @@ const updateProfile = (req, res) => {
       });
     }
     if (result?.affectedRows == 0) {
-      logger.error(err.error);
+      logger.error(err?.error ?? err);
       return res.status(403).send({
         error: "unhandled error, please contact the admin",
         code: "unexpected_error",
@@ -375,6 +405,7 @@ const updateProfile = (req, res) => {
 module.exports = {
   viewUsers,
   viewUser,
+  viewCurrentUser,
   updateUser,
   updateProfile,
   deleteUser,

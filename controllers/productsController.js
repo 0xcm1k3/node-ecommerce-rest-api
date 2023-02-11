@@ -15,14 +15,14 @@ const viewProducts = (req, res) => {
   }
 
   let offset = (page - 1) * limit;
-  const productsQuery = `SELECT * FROM PRODUCTS LIMIT ${limit} OFFSET ${offset}`;
+  const productsQuery = `SELECT PRODUCTS.*,CATEGORIES.name as category FROM PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.category=CATEGORIES.ID LIMIT ${limit} OFFSET ${offset}`;
 
   excuteSQL(
     `SELECT COUNT(*) as total FROM PRODUCTS;` + productsQuery,
     (err, products) => {
       if (err) {
         logger.error(err.error);
-        return res.send(403);
+        return res.sendStatus(403);
       }
       const total = products[0].at(-1).total;
       if (total <= 0)
@@ -39,9 +39,10 @@ const viewProducts = (req, res) => {
         message: `page ${page} out of ${Math.ceil(total / limit)}`,
         products: products.at(-1).map((v) => {
           return {
-            product_id: v.id,
+            product_id: v.ID,
             product_image: v.imageURL,
             product_name: v.name,
+            product_category: v.category,
             product_price: v.price,
           };
         }),
@@ -69,10 +70,10 @@ const viewMyProducts = (req, res) => {
 
   let offset = (page - 1) * limit;
 
-  const productsQuery = `SELECT * FROM PRODUCTS ${
+  const productsQuery = `SELECT PRODUCTS.*,CATEGORIES.name as category FROM PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.category=CATEGORIES.ID ${
     req.role?.toLowerCase() != "admin"
       ? "WHERE owner=" + SQLescape.escape(req.user.uid)
-      : ""
+      : " "
   } LIMIT ${limit} OFFSET ${offset}`;
 
   excuteSQL(
@@ -84,7 +85,7 @@ const viewMyProducts = (req, res) => {
     (err, products) => {
       if (err) {
         logger.error(err.error);
-        return res.res.sendStatus(403);
+        return res.sendStatus(403);
       }
       const total = products[0].at(-1).total;
       if (total <= 0)
@@ -97,13 +98,15 @@ const viewMyProducts = (req, res) => {
           error: `invalid page number (max pages:${Math.ceil(total / limit)})`,
           code: "invalid_page",
         });
+      console.log(products);
       return res.send({
         message: `page ${page} out of ${Math.ceil(total / limit)}`,
         products: products.at(-1).map((v) => {
           return {
-            product_id: v.id,
+            product_id: v.ID,
             product_image: v.imageURL,
             product_name: v.name,
+            product_category: v.category,
             product_price: v.price,
           };
         }),

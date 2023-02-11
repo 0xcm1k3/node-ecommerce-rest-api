@@ -52,11 +52,12 @@ const initDB = async (callback) => {
       name varchar(255) NOT NULL,
       price varchar(255) NOT NULL,
       category int NOT NULL,
-      owner varchar(255) NOT NULL,
+      owner int NOT NULL,
       imageURL varchar(255),
       PRIMARY KEY (ID),
       UNIQUE (ID),
-      FOREIGN KEY (category) REFERENCES CATEGORIES(ID)
+      FOREIGN KEY (category) REFERENCES CATEGORIES(ID),
+      FOREIGN KEY (owner) REFERENCES USERS(ID)
   );
   CREATE TABLE IF NOT EXISTS ORDERS_ITEMS (
     ID int NOT NULL AUTO_INCREMENT,
